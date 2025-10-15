@@ -18,8 +18,8 @@ except ImportError:
 
 # Google Translate 관련  
 try:
-    from googletrans import Translator as GoogleTranslator
-    import googletrans
+    from deep_translator import GoogleTranslator as DeepGoogleTranslator
+    googletrans = True
 except ImportError:
     googletrans = None
 
@@ -267,23 +267,21 @@ class OpenAITranslator(BaseTranslator):
 
 
 class GoogleTranslateAPI(BaseTranslator):
-    """Google Translate API (무료 버전)"""
+    """Google Translate API (deep-translator 사용)"""
     
     def __init__(self):
         super().__init__()
         
         if not googletrans:
-            raise ImportError("googletrans 라이브러리가 설치되지 않았습니다: pip install googletrans==3.1.0a0")
+            raise ImportError("deep-translator 라이브러리가 설치되지 않았습니다: pip install deep-translator")
             
-        self.translator = GoogleTranslator()
-        
         # 언어 코드 매핑 (Google Translate 형식)
         self.language_map = {
             '자동 감지': 'auto',
             '한국어': 'ko',
             'English': 'en',
             '日本語': 'ja', 
-            '中文': 'zh',
+            '中文': 'zh-cn',
             'Español': 'es',
             'Français': 'fr'
         }
@@ -298,18 +296,21 @@ class GoogleTranslateAPI(BaseTranslator):
             src_code = self.language_map.get(source_lang, 'auto')
             dest_code = self.language_map.get(target_lang, 'en')
             
-            # Google Translate API 호출
-            result = self.translator.translate(
-                text,
-                src=src_code if src_code != 'auto' else None,
-                dest=dest_code
-            )
+            # deep-translator 사용
+            if src_code == 'auto':
+                # 자동 감지의 경우
+                translator = DeepGoogleTranslator(source='auto', target=dest_code)
+            else:
+                translator = DeepGoogleTranslator(source=src_code, target=dest_code)
+            
+            # 번역 실행
+            result_text = translator.translate(text)
             
             return TranslationResult(
                 success=True,
-                translated_text=result.text,
+                translated_text=result_text,
                 original_text=text,
-                confidence=getattr(result, 'confidence', 0.8) or 0.8
+                confidence=0.8  # deep-translator는 confidence를 제공하지 않음
             )
             
         except Exception as e:
@@ -499,7 +500,7 @@ class TranslatorManager:
         if openai and os.getenv('OPENAI_API_KEY'):
             providers.append("OpenAI GPT-4")
             
-        # Google Translate 확인
+        # Google Translate 확인 (deep-translator)
         if googletrans:
             providers.append("Google Translate")
             

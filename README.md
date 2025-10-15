@@ -95,8 +95,11 @@ Document Translator는 **Excel, Word, PowerPoint, PDF** 문서를 다양한 언�
 git clone https://github.com/Jyk83/myTranslateProgram.git
 cd myTranslateProgram
 
-# 2. 의존성 설치
-pip install -r requirements.txt
+# 2. 의존성 설치 (권장: 단계별 설치)
+python install_dependencies.py
+
+# 또는 한 번에 설치 (의존성 충돌 가능)
+pip install -r requirements-minimal.txt
 
 # 3. API 키 설정 (선택)
 cp .env.example .env
@@ -131,6 +134,18 @@ venv\\Scripts\\activate  # Windows
 ```
 
 3. **의존성 설치**
+
+**방법 1: 자동 설치 스크립트 (권장)**
+```bash
+python install_dependencies.py
+```
+
+**방법 2: 최소 필수 라이브러리만 설치**
+```bash
+pip install -r requirements-minimal.txt
+```
+
+**방법 3: 전체 라이브러리 설치 (충돌 가능)**
 ```bash
 pip install -r requirements.txt
 ```
@@ -244,8 +259,21 @@ python build.py
 
 ### 자주 발생하는 문제
 
-**Q: "ModuleNotFoundError" 오류가 발생합니다**
-A: `pip install -r requirements.txt`로 의존성을 다시 설치하세요.
+**Q: "ModuleNotFoundError" 또는 의존성 충돌 오류가 발생합니다**
+A: 다음 방법들을 순서대로 시도하세요:
+```bash
+# 방법 1: 자동 설치 스크립트 사용
+python install_dependencies.py
+
+# 방법 2: 최소 라이브러리만 설치
+pip install -r requirements-minimal.txt
+
+# 방법 3: 가상환경 새로 생성
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# venv\Scripts\activate   # Windows
+pip install -r requirements-minimal.txt
+```
 
 **Q: API 키 오류가 발생합니다**
 A: `.env` 파일의 API 키가 올바른지 확인하고, 계정에 잔액이 있는지 확인하세요.

@@ -1,0 +1,24 @@
+# Document Translator - 최소 필수 라이브러리
+# 의존성 충돌을 피하기 위한 최소 설치 버전
+
+# 핵심 GUI
+PyQt5
+
+# 문서 처리
+openpyxl
+python-docx
+python-pptx  
+PyPDF2
+reportlab
+
+# 번역 (충돌 해결)
+openai
+deep-translator
+
+# 필수 유틸리티
+requests
+python-dotenv
+loguru
+
+# 빌드 도구
+PyInstaller
