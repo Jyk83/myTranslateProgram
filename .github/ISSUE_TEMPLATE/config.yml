@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 사용자 매뉴얼
+    url: https://github.com/Jyk83/myTranslateProgram/blob/main/docs/USER_MANUAL.md
+    about: 상세한 사용법과 문제 해결 가이드
+  - name: 💬 토론 및 아이디어
+    url: https://github.com/Jyk83/myTranslateProgram/discussions
+    about: 일반적인 토론, 아이디어 공유, 질문 및 답변
+  - name: 📧 보안 이슈 보고
+    url: mailto:security@example.com
+    about: 보안 관련 이슈는 이메일로 개인적으로 연락해주세요

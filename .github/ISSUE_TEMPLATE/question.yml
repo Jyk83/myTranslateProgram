@@ -1,0 +1,79 @@
+name: ❓ Question
+description: 사용법이나 기능에 대한 질문이 있으신가요?
+title: "[QUESTION] "
+labels: ["question", "help wanted"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        질문해주셔서 감사합니다! 최대한 빠르고 정확하게 답변드리겠습니다.
+        
+        💡 **먼저 확인해보세요:**
+        - [사용자 매뉴얼](docs/USER_MANUAL.md) 확인
+        - [README 문제 해결 섹션](README.md#-문제-해결) 확인
+        - [기존 Issues](https://github.com/Jyk83/myTranslateProgram/issues) 검색
+
+  - type: dropdown
+    id: question-type
+    attributes:
+      label: ❓ 질문 유형
+      description: 어떤 종류의 질문인가요?
+      options:
+        - 설치/실행 문제
+        - 사용법 문의
+        - 기능 문의
+        - 설정 관련
+        - API 키 관련
+        - 성능/최적화
+        - 기타
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: 📝 질문 내용
+      description: 구체적인 질문을 작성해주세요.
+      placeholder: 예) Excel 파일의 수식이 번역되지 않는 이유가 궁금합니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-tried
+    attributes:
+      label: 🔍 시도해본 것들
+      description: 문제 해결을 위해 어떤 것들을 시도해보셨나요?
+      placeholder: |
+        예)
+        - 사용자 매뉴얼 확인
+        - 설정 변경 시도
+        - 재설치
+        - 다른 파일로 테스트
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 💻 환경 정보
+      description: 사용 환경에 대한 정보를 제공해주세요.
+      placeholder: |
+        - OS: Windows 11
+        - Python 버전: 3.9.7
+        - 사용 중인 API: OpenAI GPT-4
+        - 파일 형식: .xlsx, .docx
+      render: markdown
+
+  - type: textarea
+    id: expected-outcome
+    attributes:
+      label: 🎯 원하는 결과
+      description: 어떤 결과를 원하시나요?
+      placeholder: 예) Excel의 텍스트만 번역되고 수식은 그대로 유지되길 원합니다.
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: 📋 추가 정보
+      description: 답변에 도움이 될 수 있는 기타 정보를 제공해주세요.
+      placeholder: 스크린샷, 로그, 관련 설정 등...

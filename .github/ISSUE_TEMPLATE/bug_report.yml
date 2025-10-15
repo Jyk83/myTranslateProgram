@@ -1,0 +1,98 @@
+name: 🐛 Bug Report
+description: 버그를 발견하셨나요? 문제를 신고해주세요.
+title: "[BUG] "
+labels: ["bug", "triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        버그 신고해주셔서 감사합니다! 문제를 해결하는데 도움이 되도록 가능한 한 자세한 정보를 제공해주세요.
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 🐛 버그 설명
+      description: 발생한 문제에 대한 명확하고 간결한 설명을 작성해주세요.
+      placeholder: 예) 파일을 드래그앤드롭했을 때 프로그램이 크래시됩니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: 🔄 재현 단계
+      description: 버그를 재현하기 위한 단계를 작성해주세요.
+      placeholder: |
+        1. 프로그램을 실행합니다
+        2. '파일 선택' 탭으로 이동합니다
+        3. 큰 PDF 파일을 드래그앤드롭합니다
+        4. 오류가 발생합니다
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: ✅ 예상 동작
+      description: 어떤 결과를 기대했는지 설명해주세요.
+      placeholder: 예) 파일이 정상적으로 선택되어야 합니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: ❌ 실제 동작
+      description: 실제로 어떤 일이 발생했는지 설명해주세요.
+      placeholder: 예) 프로그램이 "응답 없음" 상태가 되고 크래시됩니다.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: 💻 운영체제
+      description: 사용중인 운영체제를 선택해주세요.
+      options:
+        - Windows 11
+        - Windows 10
+        - Windows 8.1
+        - 기타 (설명에 명시)
+    validations:
+      required: true
+
+  - type: input
+    id: python-version
+    attributes:
+      label: 🐍 Python 버전
+      description: 사용중인 Python 버전을 입력해주세요.
+      placeholder: 예) Python 3.9.7
+    validations:
+      required: true
+
+  - type: textarea
+    id: file-info
+    attributes:
+      label: 📄 관련 파일 정보
+      description: 문제가 발생한 파일에 대한 정보를 제공해주세요 (개인정보 제외).
+      placeholder: |
+        - 파일 형식: .xlsx
+        - 파일 크기: 약 5MB
+        - 특이사항: 수식이 많이 포함됨
+
+  - type: textarea
+    id: error-logs
+    attributes:
+      label: 📝 에러 로그
+      description: logs 폴더의 에러 로그가 있다면 붙여넣어 주세요.
+      placeholder: 에러 로그를 여기에 붙여넣으세요...
+      render: shell
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 📋 추가 정보
+      description: 문제 해결에 도움이 될 수 있는 기타 정보를 제공해주세요.
+      placeholder: 스크린샷, 추가 설명 등...
