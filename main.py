@@ -32,6 +32,20 @@ try:
 except ImportError:
     print("python-dotenv가 설치되지 않았습니다. 환경변수를 직접 설정하세요.")
 
+def safe_input(prompt="", timeout=5):
+    """안전한 입력 함수 - 표준 입력이 없을 때 예외 처리"""
+    try:
+        # 표준 입력이 터미널에 연결되어 있는지 확인
+        if hasattr(sys.stdin, 'isatty') and sys.stdin.isatty():
+            return input(prompt)
+        else:
+            # 비대화형 환경에서는 입력을 건너뜀
+            print(f"{prompt}(비대화형 모드 - 자동으로 계속합니다)")
+            return ""
+    except (EOFError, RuntimeError, OSError):
+        print(f"{prompt}(입력을 건너뜁니다)")
+        return ""
+
 def check_requirements():
     """필수 라이브러리 확인"""
     missing_libs = []
@@ -104,25 +118,33 @@ def check_api_keys():
 
 def main():
     """메인 함수"""
-    print("=" * 60)
-    print("Document Translator v1.0")
-    print("Windows용 다국어 문서 번역 프로그램")
-    print("=" * 60)
+    # 명령행 인수 확인
+    silent_mode = "--silent" in sys.argv or "--no-input" in sys.argv
+    
+    if not silent_mode:
+        print("=" * 60)
+        print("Document Translator v1.0")
+        print("Windows용 다국어 문서 번역 프로그램")
+        print("=" * 60)
     
     # 요구사항 확인
-    print("\n📋 시스템 요구사항 확인 중...")
+    if not silent_mode:
+        print("\n📋 시스템 요구사항 확인 중...")
     
     if not check_requirements():
-        input("\nEnter 키를 눌러 종료하세요...")
+        if not silent_mode:
+            safe_input("\nEnter 키를 눌러 종료하세요...")
         return 1
         
     # API 키 확인 (경고만 표시, 계속 실행)
-    print("\n🔑 API 키 확인 중...")
-    check_api_keys()
+    if not silent_mode:
+        print("\n🔑 API 키 확인 중...")
+        check_api_keys()
     
     # PyQt5 애플리케이션 시작
     try:
-        print("\n🚀 애플리케이션 시작 중...")
+        if not silent_mode:
+            print("\n🚀 애플리케이션 시작 중...")
         
         from src.ui.main_window import main as run_app
         run_app()
@@ -130,14 +152,16 @@ def main():
     except ImportError as e:
         print(f"❌ 모듈 import 오류: {e}")
         print("src 디렉토리가 올바르게 설정되어 있는지 확인하세요.")
-        input("\nEnter 키를 눌러 종료하세요...")
+        if not silent_mode:
+            safe_input("\nEnter 키를 눌러 종료하세요...")
         return 1
         
     except Exception as e:
         print(f"❌ 애플리케이션 실행 오류: {e}")
         import traceback
         traceback.print_exc()
-        input("\nEnter 키를 눌러 종료하세요...")
+        if not silent_mode:
+            safe_input("\nEnter 키를 눌러 종료하세요...")
         return 1
         
     return 0
@@ -153,5 +177,5 @@ if __name__ == "__main__":
         print(f"\n예상치 못한 오류가 발생했습니다: {e}")
         import traceback
         traceback.print_exc()
-        input("\nEnter 키를 눌러 종료하세요...")
+        safe_input("\nEnter 키를 눌러 종료하세요...")
         sys.exit(1)

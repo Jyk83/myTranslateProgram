@@ -66,8 +66,21 @@ def build_executable():
     
     icon_path = create_icon()
     
-    # PyInstaller 명령 구성
-    cmd = [
+    # 1. 콘솔 버전 빌드
+    print("📟 콘솔 버전 빌드 중...")
+    cmd_console = [
+        'pyinstaller',
+        '--onefile',                    # 단일 실행 파일
+        '--console',                    # 콘솔 창 표시
+        '--name=DocumentTranslator_Console',  # 출력 파일명
+        '--distpath=dist',              # 출력 디렉토리
+        '--workpath=build',             # 작업 디렉토리
+        '--clean',                      # 캐시 정리
+    ]
+    
+    # 2. GUI 전용 버전 빌드
+    print("🖼️ GUI 전용 버전 빌드 중...")
+    cmd_gui = [
         'pyinstaller',
         '--onefile',                    # 단일 실행 파일
         '--windowed',                   # 콘솔 창 숨기기
@@ -77,9 +90,12 @@ def build_executable():
         '--clean',                      # 캐시 정리
     ]
     
+    # 공통 옵션 설정
+    common_options = []
+    
     # 아이콘 추가 (있는 경우)
     if icon_path:
-        cmd.extend(['--icon', icon_path])
+        common_options.extend(['--icon', icon_path])
     
     # 숨겨진 import 추가
     hidden_imports = [
@@ -94,7 +110,7 @@ def build_executable():
     ]
     
     for module in hidden_imports:
-        cmd.extend(['--hidden-import', module])
+        common_options.extend(['--hidden-import', module])
     
     # 데이터 파일 포함
     data_files = [
@@ -106,23 +122,38 @@ def build_executable():
     
     for src, dest in data_files:
         if os.path.exists(src):
-            cmd.extend(['--add-data', f'{src}{os.pathsep}{dest}'])
+            common_options.extend(['--add-data', f'{src}{os.pathsep}{dest}'])
     
-    # 메인 파일 추가
-    cmd.append('main.py')
+    # 콘솔 버전 빌드
+    cmd_console.extend(common_options)
+    cmd_console.append('main.py')
     
-    print("빌드 명령:")
-    print(" ".join(cmd))
+    print("콘솔 버전 빌드 명령:")
+    print(" ".join(cmd_console))
     print()
     
-    # 빌드 실행
     try:
-        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
-        print("✅ 빌드 성공!")
-        return True
-        
+        result = subprocess.run(cmd_console, check=True, capture_output=True, text=True)
+        print("✅ 콘솔 버전 빌드 성공!")
     except subprocess.CalledProcessError as e:
-        print(f"❌ 빌드 실패: {e}")
+        print(f"❌ 콘솔 버전 빌드 실패: {e}")
+        print(f"에러 출력: {e.stderr}")
+        return False
+    
+    # GUI 버전 빌드
+    cmd_gui.extend(common_options)
+    cmd_gui.append('run_gui.py')
+    
+    print("\nGUI 버전 빌드 명령:")
+    print(" ".join(cmd_gui))
+    print()
+    
+    try:
+        result = subprocess.run(cmd_gui, check=True, capture_output=True, text=True)
+        print("✅ GUI 버전 빌드 성공!")
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"❌ GUI 버전 빌드 실패: {e}")
         print(f"에러 출력: {e.stderr}")
         return False
 
@@ -200,25 +231,39 @@ def verify_build():
     """빌드 결과 확인"""
     print("🔍 빌드 결과 확인 중...")
     
-    exe_path = Path('dist/DocumentTranslator.exe')
+    gui_exe_path = Path('dist/DocumentTranslator.exe')
+    console_exe_path = Path('dist/DocumentTranslator_Console.exe')
     
-    if exe_path.exists():
-        file_size = exe_path.stat().st_size / (1024 * 1024)  # MB 단위
-        print(f"   ✅ 실행 파일 생성됨: {exe_path}")
-        print(f"   📏 파일 크기: {file_size:.1f} MB")
+    success = True
+    
+    # GUI 버전 확인
+    if gui_exe_path.exists():
+        file_size = gui_exe_path.stat().st_size / (1024 * 1024)  # MB 단위
+        print(f"   ✅ GUI 실행 파일 생성됨: {gui_exe_path}")
+        print(f"   📏 GUI 파일 크기: {file_size:.1f} MB")
+    else:
+        print("   ❌ GUI 실행 파일이 생성되지 않았습니다.")
+        success = False
         
-        # 간단한 실행 테스트 (--version 옵션이 있다면)
+    # 콘솔 버전 확인
+    if console_exe_path.exists():
+        file_size = console_exe_path.stat().st_size / (1024 * 1024)  # MB 단위
+        print(f"   ✅ 콘솔 실행 파일 생성됨: {console_exe_path}")
+        print(f"   📏 콘솔 파일 크기: {file_size:.1f} MB")
+    else:
+        print("   ❌ 콘솔 실행 파일이 생성되지 않았습니다.")
+        success = False
+        
+    # 간단한 실행 테스트
+    if console_exe_path.exists():
         try:
-            result = subprocess.run([str(exe_path), '--help'], 
+            result = subprocess.run([str(console_exe_path), '--silent'], 
                                   capture_output=True, text=True, timeout=10)
             print("   ✅ 실행 파일 테스트 성공")
-        except:
-            print("   ⚠️ 실행 파일 테스트 실패 (정상일 수 있음)")
+        except Exception as e:
+            print(f"   ⚠️ 실행 파일 테스트 실패: {e}")
         
-        return True
-    else:
-        print("   ❌ 실행 파일이 생성되지 않았습니다.")
-        return False
+    return success
 
 
 def main():
